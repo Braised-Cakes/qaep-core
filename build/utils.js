@@ -1,9 +1,11 @@
 'use strict'
 const path = require('path')
-const config = require('../config')
+const config = require(path.resolve(process.cwd(), 'qaep.config'))
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const packageConfig = require('../package.json')
 const glob = require('glob')
+const devIp = require('dev-ip')
+
 exports.assetsPath = function (_path) {
     const assetsSubDirectory = process.env.NODE_ENV === 'production' ?
         config.build.assetsSubDirectory :
@@ -142,4 +144,17 @@ exports.getEntries = (globPath) => {
         entries[dirname] = filepath
     })
     return entries
+}
+
+
+
+/**
+ * 获取本机局域网 ip
+ * @return {String} ip
+ */
+exports.localIp = function () {
+    const ip = devIp()
+    // vpn 下 ip 为数组，第一个元素为本机局域网 ip
+    // 第二个元素为 vpn 远程局域网 ip
+    return Array.isArray(ip) ? ip[0] : ip
 }

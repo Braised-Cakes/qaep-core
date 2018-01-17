@@ -1,7 +1,7 @@
 'use strict'
 const path = require('path')
 const utils = require('./utils')
-const config = require('../config')
+const config = require(path.resolve(process.cwd(), 'qaep.config'))
 const vueLoaderConfig = require('./vue-loader.conf')
 const glob = require('glob')
 const argv = require('yargs').argv

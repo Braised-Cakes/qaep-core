@@ -1,16 +1,19 @@
 'use strict'
 const utils = require('./utils')
 const webpack = require('webpack')
-const config = require('../config')
+// const config = require('../config')
 const merge = require('webpack-merge')
 const baseWebpackConfig = require('./webpack.base.conf')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
+const opn = require('opn')
 const argv = require('yargs').argv
 const cwd = process.cwd()
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
+const path = require('path')
+const config = require(path.resolve(cwd, 'qaep.config'))
 const devWebpackConfig = merge(baseWebpackConfig, {
     module: {
         rules: utils.styleLoaders({
@@ -28,7 +31,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         historyApiFallback: true,
         hot: true,
         compress: true,
-        host: HOST || config.dev.host,
+        // host: HOST || config.dev.host,
+        host: utils.localIp(),
         port: PORT || config.dev.port,
         open: config.dev.autoOpenBrowser,
         overlay: config.dev.errorOverlay ? {
@@ -37,6 +41,22 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         } : false,
         publicPath: config.dev.assetsPublicPath,
         proxy: config.dev.proxyTable,
+        // proxy: {
+        //     '/job': {
+        //         target: 'http://toos.baidu.com', // 你接口的域名
+        //         secure: false,
+        //         changeOrigin: false,
+        //     }
+        // },
+        // proxy: {
+        //     '/api': {
+        //         target: 'https://cnodejs.org', // 你接口的域名
+        //         secure: false,
+        //         changeOrigin: false,
+        //     }
+        // },
+
+
         quiet: true, // necessary for FriendlyErrorsPlugin
         watchOptions: {
             poll: config.dev.poll,
@@ -86,6 +106,8 @@ module.exports = new Promise((resolve, reject) => {
             }))
 
             resolve(devWebpackConfig)
+
+            opn(`http://${devWebpackConfig.devServer.host}:${port}`)
         }
     })
 })
